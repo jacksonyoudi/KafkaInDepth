@@ -1,10 +1,10 @@
-package com.youdi.ch01;
+package com.youdi.ch02;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.clients.producer.ProducerConfig;
-
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -15,22 +15,21 @@ public class ProducerFastStar {
 
     public static void main(String[] args) {
         Properties properties = new Properties();
-        properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        properties.put("bootstrap.servers", brokerList);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CompanySerializer.class.getName());
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
 
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
         // 配置生产者客户端参数并创建实例
-        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+        KafkaProducer<String, Company> producer = new KafkaProducer<String, Company>(properties);
 
         // 构建消息
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, "hell0,kafka");
+        Company company = Company.builder().name("hello").address("sz").build();
+
+        ProducerRecord<String, Company> record = new ProducerRecord<String, Company>(topic, company);
+
 
         try {
-//            producer.send(record);
-
-
             Future<RecordMetadata> future = producer.send(record);
             RecordMetadata recordMetadata = future.get();
 

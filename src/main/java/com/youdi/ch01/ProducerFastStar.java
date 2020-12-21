@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import com.youdi.ch02.ProducerInterCeptorPrefix;
 
 
 import java.util.Properties;
@@ -15,11 +16,11 @@ public class ProducerFastStar {
 
     public static void main(String[] args) {
         Properties properties = new Properties();
-        properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put("bootstrap.servers", brokerList);
 
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, ProducerInterCeptorPrefix.class.getName());
 
         // 配置生产者客户端参数并创建实例
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
